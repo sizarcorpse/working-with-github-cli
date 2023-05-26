@@ -38,6 +38,13 @@
     - [`gh pr lock {<number> | <url>} [flags]`](#gh-pr-lock-number--url-flags)
     - [`gh pr unlock {<number> | <url>} [flags]`](#gh-pr-unlock-number--url-flags)
     - [`gh pr review [<number> | <url> | <branch>] [flags]`](#gh-pr-review-number--url--branch-flags)
+  - [`gh gist`](#gh-gist)
+    - [`gh gist list [flags]`](#gh-gist-list-flags)
+    - [`gh gist view [<id> | <url>] [flags]`](#gh-gist-view-id--url-flags)
+    - [`gh gist create [<filename>] [flags]`](#gh-gist-create-filename-flags)
+    - [`gh gist rename {<id> | <url>} <oldFilename> <newFilename>`](#gh-gist-rename-id--url-oldfilename-newfilename)
+    - [`gh gist delete {<id> | <url>}`](#gh-gist-delete-id--url)
+    - [`gh gist clone <gist> [<directory>] [-- <gitFlags>...]`](#gh-gist-clone-gist-directory----gitflags)
 
 ## `gh auth`
 
@@ -599,3 +606,85 @@ $ gh pr review 123
 # request changes on a specific pull request
 $ gh pr review 123 -r -b "needs more ASCII art"
 ```
+
+## `gh gist`
+
+### `gh gist list [flags]`
+
+- `-L`, `--limit <int>` : Maximum number of gists to fetch
+- `--public` : Show only public gists
+- `--secret` : Show only secret gists
+
+```bash
+# List all gists
+$ gh gist list
+# List only public gists
+$ gh gist list --public
+# List only secret gists
+$ gh gist list --secret
+```
+
+### `gh gist view [<id> | <url>] [flags]`
+
+- `-w`, `--web` : Open gist in the browser
+- `-f`, `--filename <string>` : Select a file to view
+- `-r`, `--raw` : View the raw contents of a gist file
+- `--files` : List gist files with line counts and language identifiers
+
+```bash
+# View a gist in the browser
+$ gh gist view 123 --web
+# View a specific file in a gist
+$ gh gist view 123 --filename hello.py
+# View the raw contents of a gist file
+$ gh gist view 123 --filename hello.py --raw
+```
+
+### `gh gist create [<filename>] [flags]`
+
+- `-d`, `--desc <string>` : Description of the gist
+- `-p`, `--public` : List the gist publicly (default: secret)
+- `-f`, `--filename <string>` : Provide a filename to be used when reading from STDIN
+
+```bash
+# publish file 'hello.py' as a public gist
+$ gh gist create --public hello.py
+# create a gist with a description
+$ gh gist create hello.py -d "my Hello-World program in Python"
+# create a gist containing several files
+$ gh gist create hello.py world.py cool.txt
+# read from standard input to create a gist
+$ gh gist create -
+# create a gist from output piped from another command
+$ cat cool.txt | gh gist create
+```
+
+`gh gist edit {<id> | <url>} [<filename>] [flags]`
+
+- `-d`, `--desc <string>` : Description of the gist
+- `-f`, `--filename <string>` : Select a file to edit
+- `-a`, `--add <string>` : Add a new file to the gist
+
+```bash
+# edit a gist
+$ gh gist edit 123456
+# edit a specific file in a gist
+$ gh gist edit 123456 hello.py
+```
+
+### `gh gist rename {<id> | <url>} <oldFilename> <newFilename>`
+
+```bash
+gh gist rename b755ac492a9498b2fc8ed1772098
+b0ef gistfile0.txt hi.txt
+```
+
+### `gh gist delete {<id> | <url>}`
+
+```bash
+gh gist delete <id>
+```
+
+### `gh gist clone <gist> [<directory>] [-- <gitFlags>...]`
+
+Clone a GitHub gist locally.
