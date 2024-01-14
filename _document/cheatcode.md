@@ -45,6 +45,19 @@
     - [`gh gist rename {<id> | <url>} <oldFilename> <newFilename>`](#gh-gist-rename-id--url-oldfilename-newfilename)
     - [`gh gist delete {<id> | <url>}`](#gh-gist-delete-id--url)
     - [`gh gist clone <gist> [<directory>] [-- <gitFlags>...]`](#gh-gist-clone-gist-directory----gitflags)
+  - [`gh issue`](#gh-issue)
+    - [`gh issue list [flags]`](#gh-issue-list-flags)
+    - [`gh issue create [flags]`](#gh-issue-create-flags)
+    - [`gh issue status [flags]`](#gh-issue-status-flags)
+    - [`gh issue close {<number> | <url>} [flags]`](#gh-issue-close-number--url-flags)
+    - [`gh issue comment {<number> | <url>} [flags]`](#gh-issue-comment-number--url-flags)
+    - [`gh issue delete {<number> | <url>}`](#gh-issue-delete-number--url)
+    - [`gh issue develop {<number> | <url>} [flags]`](#gh-issue-develop-number--url-flags)
+    - [`gh issue edit {<number> | <url>} [flags]`](#gh-issue-edit-number--url-flags)
+    - [`gh issue lock {<number> | <url>} [flags]`](#gh-issue-lock-number--url-flags)
+    - [`gh issue unlock {<number> | <url>} [flags]`](#gh-issue-unlock-number--url-flags)
+    - [`gh issue pin  {<number> | <url>} [flags]`](#gh-issue-pin--number--url-flags)
+    - [`gh issue reopen {<number> | <url>} [flags]`](#gh-issue-reopen-number--url-flags)
 
 ## `gh auth`
 
@@ -688,3 +701,222 @@ gh gist delete <id>
 ### `gh gist clone <gist> [<directory>] [-- <gitFlags>...]`
 
 Clone a GitHub gist locally.
+
+## `gh issue`
+
+### `gh issue list [flags]`
+
+List and filter issues in this repository.
+
+- `-a`, `--assignee <string>` : Filter by assignee.
+- `-A`, `--author <string>` : Filter by author.
+- `-L`, `--limit <int>` : Maximum number of issues to fetch (default 30).
+- `-l`, `--label <string>` : Filter by label.
+- `--mention <string>` : Filter by mention.
+- `-m`, `--milestone <string>` : Filter by milestone.
+- `-s` , `--state <string>` : Filter by state: {`open`|`closed`|`all`} (default "open").
+- `-w`, `--web` : Open the browser to list the issue on GitHub.
+- `-t`, `--template <string>` : Format JSON output using a Go template".
+
+```bash
+# List all issues
+gh issue list
+# List all issues assigned to you
+gh issue list --assignee '@me'
+# List all issues with the "bug" label
+gh issue list --label 'bug'
+# List all issues in the "v1" milestone
+gh issue list --milestone 'v1'
+#List all issues including those closed.
+gh issue list --state all
+```
+
+### `gh issue create [flags]`
+
+Create a new issue.
+
+- `-a`, `--assignee <string>` : Assign people by their login. Use "@me" to self-assign.
+- `-b`, `--body <string>` : Body for the issue.
+- `l`, `--label <strings>` : Add labels by name.
+- `-m`, `--milestone <string>` : Add the issue to a milestone by name.
+- `-p`, `--project <string>` : Add the issue to projects by name.
+- `-t`, `--title <string>` : Title for the issue.
+- `-T`, `--template <string>` : Template for the issue's body.
+- `-w`, `--web` : Open the browser to create an issue.
+- `-recover` : Recover input from a failed run of `gh issue create`.
+
+```bash
+# Basic usage with a title
+gh issue create --title "A new issue"
+# With a title and body
+gh issue create --title "A new issue" --body "This is the body of the issue"
+# Assigning the issue to a user
+gh issue create --title "A new issue" --assignee "username"
+# Assigning the issue to yourself
+gh issue create --title "A new issue" --assignee "@me"
+# Adding labels to the issue
+gh issue create --title "A new issue" --label "bug,ui"
+# Adding the issue to a milestone
+gh issue create --title "A new issue" --milestone "Milestone1"
+# Adding the issue to a project
+gh issue create --title "A new issue" --project "Project1"
+# Using a template for the issue's body
+gh issue create --title "A new issue" --template "template.md"
+# Opening the browser to create an issue
+gh issue create --web
+# Recovering input from a failed run
+gh issue create --recover
+```
+
+### `gh issue status [flags]`
+
+Show status of relevant issues.
+
+- `-q`, `--jq <expression>` : Filter JSON output using a jq expression.
+- `--json <fields>` : Output JSON with the specified fields.
+
+```bash
+# Show status of relevant issues
+gh issue status
+# Show status of relevant issues in JSON format
+gh issue status --json number,title,url
+```
+
+### `gh issue close {<number> | <url>} [flags]`
+
+Close an issue.
+
+- `-c`, `--comment <string>` : Add a comment to the issue.
+- `-r`, `-reason <string>` : Reason for closing the issue: {`completed`|`not planned`}
+
+```bash
+# Close an issue
+gh issue close 123
+# Close an issue with a comment
+gh issue close 123 -c "I fixed this"
+```
+
+### `gh issue comment {<number> | <url>} [flags]`
+
+Add a comment to an issue.
+
+- `-b`, `--body <string>` : Body of the comment.
+- `-e`, `--editor` : Add body using editor.
+- `-w`, `--web` : Add comment in browser.
+
+```bash
+# Add a comment to an issue
+gh issue comment 123 -b "I think this is a bug"
+# Add a comment to an issue using an editor
+gh issue comment 123 -e
+# Add a comment to an issue in the browser
+gh issue comment 123 -w
+```
+
+### `gh issue delete {<number> | <url>}`
+
+Delete an issue.
+
+```bash
+# Delete an issue
+gh issue delete 123
+# Delete without confirmation prompt
+gh issue delete 123 --yes
+```
+
+### `gh issue develop {<number> | <url>} [flags]`
+
+Manage linked branches for an issue
+
+- `-b`, `--base <string>` : Name of the base branch you want to make your new branch from.
+- `--branch-repo <string>` : Name or URL of the repository where you want to create your new branch
+- `-c`, `--checkout` : Check out the new branch after creating it.
+- `-l`, `--list` : List linked branches for this issue.
+- `-n`,`--name <string>` : Name of the new branch.
+
+```bash
+# List branches for issue 123
+gh issue develop --list 123
+# List branches for issue 123 in repo cli/cli
+gh issue develop --list --repo cli/cli 123
+# Create a branch for issue 123 based on the my-feature branch
+gh issue develop 123 --base my-feature
+# Create a branch for issue 123 and checkout it out
+gh issue develop 123 --checkout
+# Create a branch in repo unknown/cli for issue 123 in repo cli/cli
+gh issue develop 123 --repo cli/cli --branch-repo unknown/cli
+```
+
+### `gh issue edit {<number> | <url>} [flags]`
+
+Edit an issue.
+
+- `--add-assignee <string>` : Add assignee by their login. Use "@me" to self-assign.
+- `--add-label <strings>` : Add labels by name.
+- `--add-project <string>` : Add the issue to projects by name.
+- `-b`, `--body <string>` : Body for the issue.
+- `--remove-assignee <string>` : Remove assignee by their login.
+- `--remove-label <strings>` : Remove labels by name.
+- `--remove-project <string>` : Remove the issue from projects by name.
+- `-t`, `--title <string>` : Title for the issue.
+- `-m`, `--milestone <string>` : Edit the milestone the issue belongs to by name.
+
+```bash
+# Edit an issue
+gh issue edit 123 --title "A better title" --body "A better description"
+# Edit an issue's assignee
+gh issue edit 123 --add-assignee "username"
+# Edit an issue's labels
+gh issue edit 123 --add-label "bug,ui"
+# Edit an issue's milestone
+gh issue edit 123 --milestone "Milestone1"
+# Edit an issue's project
+gh issue edit 123 --add-project "Project1"
+# Edit an issue's assignee, labels, and milestone
+gh issue edit 123 --add-assignee "username" --add-label "bug,ui" --milestone "Milestone1"
+```
+
+### `gh issue lock {<number> | <url>} [flags]`
+
+Lock an issue's conversation.
+
+- `-r`, `--reason <string>` : Reason for locking the issue: {`off-topic`|`resolved`|`spam`|`too_heated`}
+
+```bash
+# Lock an issue's conversation
+gh issue lock 123
+# Lock an issue's conversation with a reason
+gh issue lock 123 --reason "resolved"
+```
+
+### `gh issue unlock {<number> | <url>} [flags]`
+
+Unlock an issue's conversation.
+
+```bash
+# Unlock an issue's conversation
+gh issue unlock 123
+```
+
+### `gh issue pin  {<number> | <url>} [flags]`
+
+Pin an issue to the top of the issue list.
+
+```bash
+# Pin an issue to the top of the issue list
+
+gh issue pin 123
+```
+
+### `gh issue reopen {<number> | <url>} [flags]`
+
+Reopen a closed issue.
+
+- `-c` , `--comment <string>` : Add a comment to the issue.
+
+```bash
+# Reopen a closed issue
+gh issue reopen 123
+# Reopen a closed issue with a comment
+gh issue reopen 123 --comment "I think this is a bug"
+```
